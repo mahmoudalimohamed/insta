@@ -6,7 +6,7 @@ const { width, height } = Dimensions.get("window");
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: COLORS.background,
+    backgroundColor: COLORS.white,
   },
   brandSection: {
     alignItems: "center",
@@ -56,7 +56,7 @@ export const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: COLORS.white,
+    backgroundColor: COLORS.primary,
     paddingVertical: 16,
     paddingHorizontal: 24,
     borderRadius: 14,
@@ -82,12 +82,11 @@ export const styles = StyleSheet.create({
   googleButtonText: {
     fontSize: 16,
     fontWeight: "600",
-    color: COLORS.primary,
   },
   termsText: {
     textAlign: "center",
     fontSize: 12,
-    color: COLORS.primary,
+    color: COLORS.black,
     maxWidth: 280,
   },
 });

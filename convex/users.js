@@ -16,7 +16,7 @@ export const createUser = mutation({
     // check if user already exists
     const existingUser = await ctx.db
       .query("users")
-      .withIndex("by_clerkId", (q) => q.eq("clerkId", args.clerkId))
+      .withIndex("by_email", (q) => q.eq("email", args.email))
       .first();
     if (existingUser) return;
 
@@ -34,3 +34,17 @@ export const createUser = mutation({
     });
   },
 });
+
+export const getAuthenticatedUser = async (ctx) => {
+  const identity = await ctx.auth.getUserIdentity();
+  if (!identity) throw new Error("Unauthenticated");
+
+  const currentUser = await ctx.db
+    .query("users")
+    .withIndex("by_email", (q) => q.eq("email", identity.email))
+    .first();
+
+  if (!currentUser) throw new Error("User not found");
+
+  return currentUser;
+};
