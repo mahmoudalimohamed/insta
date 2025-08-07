@@ -198,9 +198,7 @@ export const getPostsByUser = query({
     userId: v.optional(v.id("users")),
   },
   handler: async (ctx, args) => {
-    const user = args.userId
-      ? await ctx.db.get(args.userId)
-      : await getAuthenticatedUser(ctx);
+    const user = await getAuthenticatedUser(ctx);
 
     if (!user) throw new Error("User not found");
 

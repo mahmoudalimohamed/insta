@@ -1,3 +1,4 @@
+import { Loader } from "@/components/Loader";
 import Post from "@/components/Post";
 import StoriesSection from "@/components/Stories";
 import { COLORS } from "@/constants/theme";
@@ -7,7 +8,6 @@ import { Ionicons } from "@expo/vector-icons";
 import { useQuery } from "convex/react";
 import { useState } from "react";
 import {
-  ActivityIndicator,
   FlatList,
   RefreshControl,
   Text,
@@ -21,7 +21,7 @@ export default function Index() {
 
   const posts = useQuery(api.posts.getFeedPosts);
 
-  if (posts === undefined) return <ActivityIndicator />;
+  if (posts === undefined) return <Loader />;
 
   const NoPostsFound = () => (
     <View style={styles.noPostsFound}>
