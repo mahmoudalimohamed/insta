@@ -8,13 +8,15 @@ export default function TabLayout() {
         tabBarShowLabel: true,
         headerShown: false,
         tabBarActiveTintColor: COLORS.primary,
-        tabBarInactiveTintColor: COLORS.black,
+        tabBarInactiveTintColor: COLORS.white,
+
         tabBarStyle: {
           height: 60,
           paddingBottom: 5,
           paddingTop: 5,
           position: "absolute",
           elevation: 0,
+          backgroundColor: COLORS.black,
         },
       }}
     >
