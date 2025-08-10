@@ -3,39 +3,44 @@ import { getAuthenticatedUser } from "./users";
 
 export const getNotifications = query({
   handler: async (ctx) => {
-    const currentUser = await getAuthenticatedUser(ctx);
-    const notifications = await ctx.db
-      .query("notifications")
-      .withIndex("by_receiverId", (q) => q.eq("receiverId", currentUser._id))
-      .order("desc")
-      .collect();
+    try {
+      const currentUser = await getAuthenticatedUser(ctx);
+      const notifications = await ctx.db
+        .query("notifications")
+        .withIndex("by_receiverId", (q) => q.eq("receiverId", currentUser._id))
+        .order("desc")
+        .collect();
 
-    const notificationsWithInfo = await Promise.all(
-      notifications.map(async (notification) => {
-        const sender = await ctx.db.get(notification.senderId);
+      const notificationsWithInfo = await Promise.all(
+        notifications.map(async (notification) => {
+          const sender = await ctx.db.get(notification.senderId);
 
-        let post = null;
-        let comment = null;
+          let post = null;
+          let comment = null;
 
-        if (notification.postId) {
-          post = await ctx.db.get(notification.postId);
-        }
-        if (notification.type === "comment" && notification.commentId) {
-          comment = await ctx.db.get(notification.commentId);
-        }
+          if (notification.postId) {
+            post = await ctx.db.get(notification.postId);
+          }
+          if (notification.type === "comment" && notification.commentId) {
+            comment = await ctx.db.get(notification.commentId);
+          }
 
-        return {
-          ...notification,
-          sender: {
-            _id: sender._id,
-            username: sender.username,
-            image: sender.image,
-          },
-          post,
-          comment: comment?.content,
-        };
-      })
-    );
-    return notificationsWithInfo;
+          return {
+            ...notification,
+            sender: {
+              _id: sender?._id,
+              username: sender?.username,
+              image: sender?.image,
+            },
+            post,
+            comment: comment?.content,
+          };
+        })
+      );
+      return notificationsWithInfo;
+    } catch (error) {
+      console.error("Error in getNotifications:", error);
+      return []; // Return empty array if user is not found or other errors occur
+    }
   },
 });
