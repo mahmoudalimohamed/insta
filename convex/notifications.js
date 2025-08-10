@@ -5,7 +5,7 @@ export const getNotifications = query({
   handler: async (ctx) => {
     const currentUser = await getAuthenticatedUser(ctx);
     const notifications = await ctx.db
-      .query("notification")
+      .query("notifications")
       .withIndex("by_receiverId", (q) => q.eq("receiverId", currentUser._id))
       .order("desc")
       .collect();
