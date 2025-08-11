@@ -20,7 +20,7 @@ export default function Post({ post }) {
 
   const currentUser = useQuery(
     api.users.getUserByClerkId,
-    user ? { email: user.primaryEmailAddress.emailAddress } : "skip"
+    user ? { clerkId: user.id } : "skip"
   );
 
   const toggleLike = useMutation(api.posts.toggleLike);

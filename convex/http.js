@@ -48,47 +48,29 @@ http.route({
     }
 
     const eventType = evt.type;
-    console.log("Webhook event received:", eventType);
 
-    if (eventType === "user.created") {
-      console.log("Processing user.created event for user:", evt.data.id);
-      
-      // Validate that evt.data exists and has required properties
-      if (!evt.data || !evt.data.id) {
-        console.log("Invalid user.created event data:", evt.data);
-        return new Response("Invalid event data", { status: 400 });
-      }
-      
+    if (eventType === "user.created" || eventType === "user.updated") {
       const { id, email_addresses, first_name, last_name, image_url } =
         evt.data;
 
-      // Check if email_addresses exists and has at least one email
-      if (!email_addresses || email_addresses.length === 0) {
-        console.log("No email addresses found for user:", id);
-        return new Response("No email address found", { status: 400 });
-      }
-
-      const email = email_addresses[0].email_address;
-      if (!email) {
-        console.log("Email address is null or undefined for user:", id);
-        return new Response("Invalid email address", { status: 400 });
-      }
-
+      const email = email_addresses[0]?.email_address;
       const name = `${first_name || ""} ${last_name || ""}`.trim();
 
       try {
-        const userId = await ctx.runMutation(api.users.createUser, {
+        // For user.updated, we can use a different mutation or add logic to createUser to handle updates
+        // For now, we'll just use createUser which will do nothing if the user already exists
+        await ctx.runMutation(api.users.createUser, {
           email,
-          fullname: name || "User",
-          image: image_url || "https://via.placeholder.com/150",
+          fullname: name,
+          image: image_url,
           clerkId: id,
-          username: email.split("@")[0] || "user",
-          bio: undefined, // Optional field
+          username: email
+            ? email.split("@")[0]
+            : name.replace(/\s+/g, "").toLowerCase(),
         });
-        console.log("User created successfully via webhook:", userId);
       } catch (error) {
-        console.log("Error creating user:", error);
-        return new Response("Error creating user", { status: 500 });
+        console.log("Error creating or updating user:", error);
+        return new Response("Error creating or updating user", { status: 500 });
       }
     }
 

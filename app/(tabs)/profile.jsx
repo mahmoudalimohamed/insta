@@ -1,13 +1,11 @@
 import { Loader } from "@/components/Loader";
 import { COLORS } from "@/constants/theme";
-import { styles } from "@/styles/profile.styles";
-import { Ionicons } from "@expo/vector-icons";
-
 import { api } from "@/convex/_generated/api";
-import { Image } from "expo-image";
-
-import { useAuth, useUser } from "@clerk/clerk-expo";
+import { styles } from "@/styles/profile.styles";
+import { useAuth } from "@clerk/clerk-expo";
+import { Ionicons } from "@expo/vector-icons";
 import { useMutation, useQuery } from "convex/react";
+import { Image } from "expo-image";
 import { useState } from "react";
 import {
   FlatList,
@@ -22,14 +20,13 @@ import {
   TouchableWithoutFeedback,
   View,
 } from "react-native";
-export default function profile() {
+
+export default function Profile() {
   const { signOut, userId } = useAuth();
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
-
-  const { user } = useUser();
   const currentUser = useQuery(
     api.users.getUserByClerkId,
-    user ? { email: user.primaryEmailAddress.emailAddress } : "skip"
+    userId ? { clerkId: userId } : "skip"
   );
 
   const [editedProfile, setEditedProfile] = useState({
@@ -48,6 +45,7 @@ export default function profile() {
   };
 
   if (!currentUser || posts === undefined) return <Loader />;
+
   return (
     <View style={styles.container}>
       {/* HEADER */}
@@ -215,7 +213,7 @@ export default function profile() {
   );
 }
 
-const NoPostsFound = () => {
+function NoPostsFound() {
   return (
     <View
       style={{
@@ -229,4 +227,4 @@ const NoPostsFound = () => {
       <Text style={{ fontSize: 20, color: COLORS.white }}>No posts yet</Text>
     </View>
   );
-};
+}
